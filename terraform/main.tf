@@ -1,4 +1,4 @@
-# main.tf — étape 2 : image, réseau et parc de serveurs
+# main.tf — image, réseau, parc de serveurs et inventaire Ansible
 
 # L'image construite à partir de ../image-cible/Dockerfile
 resource "docker_image" "cible" {
@@ -33,4 +33,29 @@ module "serveur" {
   reseau    = docker_network.reseau.name
   port_ssh  = each.value.port_ssh
   port_http = each.value.port_http
+}
+
+# Regrouper les noms de serveurs par groupe Ansible :
+#   { api = ["api1", "api2"], db = ["db1"], lb = ["lb1"] }
+locals {
+  groupes = {
+    for groupe in distinct([for s in values(var.serveurs) : s.groupe]) :
+    groupe => sort([for nom, s in var.serveurs : nom if s.groupe == groupe])
+  }
+}
+
+# L'inventaire Ansible, ÉCRIT par Terraform à partir d'un gabarit
+resource "local_file" "inventaire" {
+  filename        = "${path.module}/../ansible/inventory.ini"
+  file_permission = "0644"
+
+  content = templatefile("${path.module}/templates/inventory.ini.tftpl", {
+    groupes  = local.groupes
+    serveurs = var.serveurs
+    prefixe  = var.prefixe
+    cle_ssh  = var.cle_ssh_privee
+  })
+
+  # N'écrire l'inventaire qu'une fois les conteneurs créés
+  depends_on = [module.serveur]
 }

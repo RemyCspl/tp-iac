@@ -6,3 +6,13 @@ output "conteneurs" {
     nom => "${serveur.nom} (ssh 127.0.0.1:${serveur.port_ssh})"
   }
 }
+
+output "inventaire_ansible" {
+  description = "Chemin de l'inventaire généré pour Ansible"
+  value       = abspath(local_file.inventaire.filename)
+}
+
+output "url_stockline" {
+  description = "URL publique de StockLine (via le répartiteur nginx)"
+  value       = "http://localhost:8080"
+}
