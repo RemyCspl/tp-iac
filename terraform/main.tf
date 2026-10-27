@@ -1,4 +1,4 @@
-# main.tf — étape 1 : l'image cible et le réseau
+# main.tf — étape 2 : image, réseau et parc de serveurs
 
 # L'image construite à partir de ../image-cible/Dockerfile
 resource "docker_image" "cible" {
@@ -21,4 +21,16 @@ resource "docker_image" "cible" {
 # Le réseau privé des conteneurs : ils s'y joignent par leur NOM (DNS Docker)
 resource "docker_network" "reseau" {
   name = "${var.prefixe}-net"
+}
+
+# Un appel du module « serveur » PAR entrée de var.serveurs
+module "serveur" {
+  source   = "./modules/serveur"
+  for_each = var.serveurs
+
+  nom       = "${var.prefixe}-${each.key}"
+  image_id  = docker_image.cible.image_id
+  reseau    = docker_network.reseau.name
+  port_ssh  = each.value.port_ssh
+  port_http = each.value.port_http
 }
