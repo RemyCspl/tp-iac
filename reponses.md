@@ -15,3 +15,9 @@
 ```
     Terraform propose de rétablir le port attendu. Cela montre que inventory.ini est généré par Terraform et ne doit pas être modifié à la main.
 ```
+
+# Partie 5
+- Question : le module command affiche CHANGED alors qu'un simple cat ne modifie rien. Pourquoi ? Que faudrait-il ajouter dans un playbook pour que ce soit juste ?
+```
+    command signale CHANGED par défaut, car Ansible ne peut pas savoir si la commande modifie le système. Pour un cat, ajoutez changed_when: false au playbook.
+```
