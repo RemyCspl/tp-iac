@@ -1,7 +1,7 @@
 # Partie 2
 - Question : relancez terraform plan. Pourquoi annonce-t-il « No changes » alors que vous venez de créer deux objets ?
 ```
-    La commande 'terraform plan' affiche 'no changes' car on a définit dans notre main.tf que l'image ne doit être reconstruite que si le filesha1 est modifié or en réappliquant notre terraform en ne faisant aucune modification, ce filesha restera le même et donc tf ne reconstruira pas l'image donc ne fera aucun changement.
+    Terraform compare la configuration à son état enregistré ; les deux ressources existent déjà et sont conformes, donc il annonce « No changes ».
 ```
 
 # Partie 3
@@ -20,4 +20,10 @@
 - Question : le module command affiche CHANGED alors qu'un simple cat ne modifie rien. Pourquoi ? Que faudrait-il ajouter dans un playbook pour que ce soit juste ?
 ```
     command signale CHANGED par défaut, car Ansible ne peut pas savoir si la commande modifie le système. Pour un cat, ajoutez changed_when: false au playbook.
+```
+
+# Partie 6
+- Question : au deuxième passage, le handler « Redémarrer PostgreSQL » ne s'est pas exécuté. Pourquoi ?
+```
+    Au deuxième passage, PostgreSQL est déjà configuré : aucune tâche n’a changé, donc aucune n’a notifié le handler. Celui-ci ne redémarre le service qu’après un changement.
 ```

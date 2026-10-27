@@ -5,3 +5,9 @@
   become: true
   roles:
     - commun
+
+- name: Serveur de base de données
+  hosts: db
+  become: true
+  roles:
+    - postgresql
