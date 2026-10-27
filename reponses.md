@@ -27,3 +27,16 @@
 ```
     Au deuxième passage, PostgreSQL est déjà configuré : aucune tâche n’a changé, donc aucune n’a notifié le handler. Celui-ci ne redémarre le service qu’après un changement.
 ```
+
+# Partie 7
+- Question : connectez-vous à api1 (ssh -i ~/.ssh/tp_iac_ed25519 -p 2242 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ansible@127.0.0.1) et tapez cat /etc/stockline/stockline.env. Que se passe-t-il, et pourquoi est-ce voulu ? (exit pour revenir.)
+```
+    L’accès au fichier est refusé, car il contient le mot de passe de la base et ses permissions le réservent à l’utilisateur stockline et à root.
+```
+
+# Partie 9
+- Question : combien de fichiers avez-vous modifiés pour ajouter un serveur ? Faites la liste de tout ce que Terraform puis Ansible ont fait à votre place.
+```
+    Un seul fichier : terraform/variables.tf a dû être modifié à la main. 
+    Terraform a créé le conteneur et mis à jour l’inventaire ; Ansible a configuré api3 et ajouté ce serveur à la configuration nginx.
+```

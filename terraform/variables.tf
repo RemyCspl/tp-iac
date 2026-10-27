@@ -27,6 +27,7 @@ variable "serveurs" {
     db1  = { groupe = "db", port_ssh = 2241 }
     api1 = { groupe = "api", port_ssh = 2242 }
     api2 = { groupe = "api", port_ssh = 2243 }
+    api3 = { groupe = "api", port_ssh = 2245 }
     lb1  = { groupe = "lb", port_ssh = 2244, port_http = 8080 }
   }
 }

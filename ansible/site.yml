@@ -11,3 +11,34 @@
   become: true
   roles:
     - postgresql
+
+- name: Serveurs d'API StockLine (un par un)
+  hosts: api
+  become: true
+  serial: 1
+  roles:
+    - stockline
+
+- name: Répartiteur de charge
+  hosts: lb
+  become: true
+  roles:
+    - nginx
+
+- name: Vérification de bout en bout depuis le poste
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Appeler StockLine via le répartiteur (http://localhost:8080)
+      ansible.builtin.uri:
+        url: http://localhost:8080/sante
+        return_content: true
+      register: sante_finale
+      until: sante_finale.json is defined and sante_finale.json.base_de_donnees == "ok"
+      retries: 10
+      delay: 2
+
+    - name: Afficher la réponse de StockLine
+      ansible.builtin.debug:
+        var: sante_finale.json
